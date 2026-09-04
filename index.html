@@ -1,1 +1,70 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Benim İlk Sitem</title>
 
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background: #f5f0ff;
+            color: #29213d;
+            text-align: center;
+            padding: 60px 20px;
+        }
+
+        .kutu {
+            max-width: 600px;
+            margin: auto;
+            background: white;
+            padding: 40px;
+            border-radius: 20px;
+            box-shadow: 0 5px 20px rgba(0,0,0,0.1);
+        }
+
+        h1 {
+            font-size: 40px;
+        }
+
+        p {
+            font-size: 18px;
+            line-height: 1.6;
+        }
+
+        button {
+            padding: 12px 22px;
+            border: none;
+            border-radius: 10px;
+            background: #29213d;
+            color: white;
+            font-size: 16px;
+            cursor: pointer;
+        }
+    </style>
+</head>
+
+<body>
+
+    <div class="kutu">
+        <h1>Merhaba! 👋</h1>
+
+        <p>
+            Bu benim yaptığım ilk internet sitesi.
+            Ve şu anda gerçekten internette yayınlanıyor!
+        </p>
+
+        <button onclick="mesajGoster()">Bana tıkla</button>
+
+        <p id="mesaj"></p>
+    </div>
+
+    <script>
+        function mesajGoster() {
+            document.getElementById("mesaj").textContent =
+                "Çalıştııı! 🎉";
+        }
+    </script>
+
+</body>
+</html>
