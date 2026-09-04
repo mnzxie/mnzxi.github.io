@@ -4,7 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<title>Naz'ın Kesinlikle Normal Sitesi™</title>
+<title>Naz™</title>
 
 <style>
     * {
@@ -29,8 +29,10 @@
     }
 
     h1 {
+        font-family: "Trebuchet MS", Arial, sans-serif;
         font-size: clamp(30px, 6vw, 65px);
         margin: 0;
+        color: #00c8ff;
         text-shadow: 4px 4px 0 #ff00aa;
         transform: rotate(-1deg);
     }
@@ -77,6 +79,7 @@
         font-size: 16px;
         cursor: pointer;
         transition: 0.15s;
+        touch-action: manipulation;
     }
 
     button:hover {
@@ -86,6 +89,11 @@
     .danger {
         background: #ff1744;
         color: white;
+    }
+
+    .emergency {
+        background: white;
+        color: black;
     }
 
     .blue {
@@ -196,7 +204,7 @@
 <div class="fish">🐟</div>
 
 <header>
-    <h1>NAZ'IN SİTESİ™</h1>
+    <h1>NAZ™</h1>
 
     <div class="subtitle">
         Kesinlikle normal bir internet sitesi.
@@ -230,19 +238,19 @@
             🚫 BUNA BASMA
         </button>
 
-        <button onclick="emergency()">
+        <button class="emergency" onclick="emergency()">
             🚨 ACİL DURUM
         </button>
 
         <button class="blue" onclick="fate()">
-            🎰 KADER MAKİNESİ
+            💬 NAZDAN MESAJ AL
         </button>
 
         <button class="green" onclick="document.getElementById('document').style.display='block'">
             📜 ÇOK ÖNEMLİ BELGE
         </button>
 
-        <button id="runaway" onmouseover="runAway()">
+        <button id="runaway" onmouseover="runAway()" ontouchstart="runAway(event)">
             🖱️ BURAYA BAS
         </button>
 
@@ -306,6 +314,9 @@ const messages = [
     "Hata: Mantık bulunamadı."
 ];
 
+let dontClickCount = 0;
+let dontClickTimer;
+
 function randomMessage() {
     const message =
         messages[Math.floor(Math.random() * messages.length)];
@@ -314,62 +325,147 @@ function randomMessage() {
 }
 
 function dontClick() {
-    document.getElementById("message").innerText =
-        "🚨 SEN NEDEN BASTIN 🚨";
+
+    dontClickCount++;
+
+    clearTimeout(dontClickTimer);
+
+    if (dontClickCount === 1) {
+
+        document.getElementById("message").innerText =
+            "algılar kapalı galiba";
+
+    } else if (dontClickCount === 2) {
+
+        document.getElementById("message").innerText =
+            "malmısın";
+
+    } else if (dontClickCount === 3) {
+
+        document.getElementById("message").innerText =
+            "kişisel bilgiler başarıyla kaydedildi";
+
+    } else {
+
+        document.getElementById("message").innerText =
+            "cidden hâlâ basıyorsun mu?";
+    }
+
+    dontClickTimer = setTimeout(() => {
+
+        document.getElementById("message").innerText =
+            "şaka lan hemen tırstın";
+
+    }, 1000);
 }
 
 function emergency() {
+
     document.getElementById("message").innerText =
         "ACİL DURUM İPTAL EDİLDİ. ACİL DURUM YOKMUŞ.";
+
 }
+
+let fateCount = 0;
 
 function fate() {
 
-    const results = [
-        "Bugün şanslısın.",
-        "Bugün şanslı değilsin.",
-        "Bir balık seni düşünüyor.",
-        "Yakında su içeceksin.",
-        "Büyük ihtimalle bunu tekrar deneyeceksin.",
-        "Kader kararsız.",
-        "Kader makinesi istifa etti.",
-        "Sonuç: bilmiyorum."
+    fateCount++;
+
+    const resultMessages = [
+
+        "naz şu an mesaj yazmak istemiyor.",
+        "naz meşgul. sebebi bilinmiyor.",
+        "naz sana bir şey söylemek istedi ama unuttu.",
+        "naz: bunu neden tekrar tekrar deniyorsun?",
+        "naz şu anda siteyle ilgileniyor.",
+        "naz mesaj göndermeyi reddetti.",
+        "naz: su iç.",
+        "naz: bugünlük bu kadar.",
+        "naz: kader makinesi daha mantıklıydı.",
+        "naz: bunu okuyorsan hâlâ buradasın."
+
     ];
 
-    const result =
-        results[Math.floor(Math.random() * results.length)];
+    let result;
+
+    if (fateCount === 1) {
+
+        result =
+            "naz mesaj yazmak istemedi birdaha dene";
+
+    } else if (fateCount === 2) {
+
+        result =
+            "yada denemesen mi üşendim ama istersen dene";
+
+    } else if (fateCount === 3) {
+
+        result =
+            "su iç";
+
+    } else {
+
+        result =
+            resultMessages[
+                Math.floor(Math.random() * resultMessages.length)
+            ];
+    }
 
     document.getElementById("message").innerText =
-        "🎰 KADER: " + result;
+        "💬 NAZ: " + result;
 }
 
-function runAway() {
+function runAway(event) {
 
-    const button = document.getElementById("runaway");
+    if (event) {
+        event.preventDefault();
+    }
 
-    const x = Math.random() * 250 - 125;
-    const y = Math.random() * 150 - 75;
+    const button =
+        document.getElementById("runaway");
+
+    const maxX =
+        Math.min(180, window.innerWidth * 0.25);
+
+    const maxY =
+        Math.min(100, window.innerHeight * 0.12);
+
+    const x =
+        Math.random() * (maxX * 2) - maxX;
+
+    const y =
+        Math.random() * (maxY * 2) - maxY;
 
     button.style.transform =
-        `translate(${x}px, ${y}px) rotate(${Math.random() * 20 - 10}deg)`;
+        `translate(${x}px, ${y}px)
+         rotate(${Math.random() * 20 - 10}deg)`;
 }
 
 document.addEventListener("mousemove", function(e) {
 
-    const pupils = document.querySelectorAll(".pupil");
+    const pupils =
+        document.querySelectorAll(".pupil");
 
     pupils.forEach(pupil => {
 
-        const eye = pupil.parentElement;
-        const rect = eye.getBoundingClientRect();
+        const eye =
+            pupil.parentElement;
 
-        const eyeX = rect.left + rect.width / 2;
-        const eyeY = rect.top + rect.height / 2;
+        const rect =
+            eye.getBoundingClientRect();
 
-        const angle = Math.atan2(
-            e.clientY - eyeY,
-            e.clientX - eyeX
-        );
+        const eyeX =
+            rect.left + rect.width / 2;
+
+        const eyeY =
+            rect.top + rect.height / 2;
+
+        const angle =
+            Math.atan2(
+                e.clientY - eyeY,
+                e.clientX - eyeX
+            );
 
         const distance = 15;
 
@@ -378,12 +474,15 @@ document.addEventListener("mousemove", function(e) {
 
         pupil.style.top =
             22 + Math.sin(angle) * distance + "px";
+
     });
+
 });
 
 setInterval(() => {
 
-    const number = Math.floor(Math.random() * 8);
+    const number =
+        Math.floor(Math.random() * 8);
 
     document.getElementById("seriousness").innerText =
         "%" + number;
