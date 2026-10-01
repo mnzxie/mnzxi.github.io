@@ -1,497 +1,444 @@
+```html
 <!DOCTYPE html>
 <html lang="tr">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<title>Naz™</title>
+    <title>Naz</title>
 
-<style>
-    * {
-        box-sizing: border-box;
-    }
-
-    body {
-        margin: 0;
-        min-height: 100vh;
-        font-family: Arial, sans-serif;
-        background:
-            radial-gradient(circle at 20% 20%, #ffcc00 0 2px, transparent 3px),
-            radial-gradient(circle at 80% 60%, #ff00aa 0 2px, transparent 3px),
-            #111;
-        color: white;
-        overflow-x: hidden;
-    }
-
-    header {
-        text-align: center;
-        padding: 40px 20px 20px;
-    }
-
-    h1 {
-        font-family: "Trebuchet MS", Arial, sans-serif;
-        font-size: clamp(30px, 6vw, 65px);
-        margin: 0;
-        color: #00c8ff;
-        text-shadow: 4px 4px 0 #ff00aa;
-        transform: rotate(-1deg);
-    }
-
-    .subtitle {
-        margin-top: 15px;
-        color: #aaa;
-        font-size: 18px;
-    }
-
-    .warning {
-        display: inline-block;
-        margin-top: 15px;
-        padding: 8px 15px;
-        background: #ff003c;
-        color: white;
-        font-weight: bold;
-        transform: rotate(2deg);
-    }
-
-    .box {
-        width: min(850px, 90%);
-        margin: 25px auto;
-        padding: 25px;
-        border: 3px solid white;
-        background: #1c1c1c;
-        box-shadow: 8px 8px 0 #ff00aa;
-    }
-
-    .buttons {
-        display: flex;
-        flex-wrap: wrap;
-        justify-content: center;
-        gap: 15px;
-        margin-top: 20px;
-    }
-
-    button {
-        border: 3px solid white;
-        background: #ffcc00;
-        color: black;
-        padding: 14px 20px;
-        font-weight: bold;
-        font-size: 16px;
-        cursor: pointer;
-        transition: 0.15s;
-        touch-action: manipulation;
-    }
-
-    button:hover {
-        transform: scale(1.08) rotate(-2deg);
-    }
-
-    .danger {
-        background: #ff1744;
-        color: white;
-    }
-
-    .emergency {
-        background: white;
-        color: black;
-    }
-
-    .blue {
-        background: #00c8ff;
-    }
-
-    .green {
-        background: #6dff4c;
-    }
-
-    #message {
-        min-height: 45px;
-        margin-top: 25px;
-        padding: 15px;
-        border: 2px dashed #aaa;
-        text-align: center;
-        font-size: 20px;
-    }
-
-    .stats {
-        text-align: center;
-        margin: 25px auto;
-        font-family: monospace;
-        font-size: 18px;
-    }
-
-    #seriousness {
-        color: #ffcc00;
-        font-weight: bold;
-    }
-
-    .fish {
-        position: fixed;
-        font-size: 40px;
-        pointer-events: none;
-        z-index: 5;
-        animation: swim 12s linear infinite;
-    }
-
-    @keyframes swim {
-        0% {
-            left: -60px;
-            top: 70%;
+    <style>
+        * {
+            box-sizing: border-box;
         }
 
-        50% {
+        html, body {
+            margin: 0;
+            width: 100%;
+            height: 100%;
+            overflow: hidden;
+        }
+
+        body {
+            background: #111;
+            color: white;
+            font-family: Arial, sans-serif;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        /* Ana yazı */
+        #message {
+            opacity: 0;
+            transform: scale(0.5);
+            font-size: clamp(28px, 6vw, 70px);
+            font-weight: bold;
+            text-align: center;
+            transition: opacity 0.5s ease, transform 0.5s ease;
+            padding: 20px;
+        }
+
+        #message.show {
+            opacity: 1;
+            transform: scale(1);
+        }
+
+        /* Bomba */
+        #bomb {
+            position: fixed;
+            top: -120px;
             left: 50%;
-            top: 30%;
+            transform: translateX(-50%);
+            font-size: 90px;
+            z-index: 10;
+            user-select: none;
         }
 
-        100% {
-            left: 110%;
-            top: 65%;
+        /* Patlama */
+        #explosion {
+            position: fixed;
+            left: 50%;
+            top: 50%;
+            transform: translate(-50%, -50%) scale(0);
+            font-size: 180px;
+            opacity: 0;
+            z-index: 20;
+            user-select: none;
         }
-    }
 
-    .eye-area {
-        display: flex;
-        justify-content: center;
-        gap: 15px;
-        margin: 25px;
-    }
+        #explosion.explode {
+            animation: explosion 0.7s ease-out forwards;
+        }
 
-    .eye {
-        width: 70px;
-        height: 70px;
-        background: white;
-        border-radius: 50%;
-        border: 4px solid black;
-        position: relative;
-    }
+        @keyframes explosion {
+            0% {
+                transform: translate(-50%, -50%) scale(0);
+                opacity: 0;
+            }
 
-    .pupil {
-        width: 25px;
-        height: 25px;
-        background: black;
-        border-radius: 50%;
-        position: absolute;
-        left: 22px;
-        top: 22px;
-    }
+            30% {
+                transform: translate(-50%, -50%) scale(1.5);
+                opacity: 1;
+            }
 
-    #document {
-        display: none;
-        margin-top: 20px;
-        padding: 25px;
-        background: #eee;
-        color: black;
-        border: 5px double black;
-        font-family: Georgia, serif;
-    }
+            100% {
+                transform: translate(-50%, -50%) scale(3);
+                opacity: 0;
+            }
+        }
 
-    footer {
-        text-align: center;
-        padding: 40px 20px;
-        color: #666;
-        font-size: 13px;
-    }
+        /* Bombanın düşmesi */
+        #bomb.drop {
+            animation: drop 1.4s cubic-bezier(.2,.8,.3,1) forwards;
+        }
 
-    #runaway {
-        position: relative;
-    }
-</style>
+        @keyframes drop {
+            0% {
+                top: -120px;
+            }
+
+            75% {
+                top: calc(100vh - 130px);
+            }
+
+            85% {
+                top: calc(100vh - 160px);
+            }
+
+            92% {
+                top: calc(100vh - 130px);
+            }
+
+            100% {
+                top: calc(100vh - 140px);
+            }
+        }
+
+        /* Patlama sırasında ekran */
+        body.shake {
+            animation: shake 0.45s ease;
+        }
+
+        @keyframes shake {
+            0%   { transform: translate(0, 0); }
+            15%  { transform: translate(-12px, 8px); }
+            30%  { transform: translate(10px, -8px); }
+            45%  { transform: translate(-8px, -10px); }
+            60%  { transform: translate(10px, 7px); }
+            75%  { transform: translate(-6px, 4px); }
+            100% { transform: translate(0, 0); }
+        }
+
+        /* Ekrandaki beyaz patlama */
+        #flash {
+            position: fixed;
+            inset: 0;
+            background: white;
+            opacity: 0;
+            pointer-events: none;
+            z-index: 30;
+        }
+
+        #flash.flash {
+            animation: flash 0.25s ease-out;
+        }
+
+        @keyframes flash {
+            0% {
+                opacity: 0.9;
+            }
+
+            100% {
+                opacity: 0;
+            }
+        }
+
+        /* Küçük açıklama */
+        #sub {
+            position: fixed;
+            bottom: 25px;
+            left: 0;
+            right: 0;
+            text-align: center;
+            color: #555;
+            font-size: 13px;
+            opacity: 0;
+            transition: opacity 1s ease;
+        }
+
+        #sub.show {
+            opacity: 1;
+        }
+    </style>
 </head>
 
 <body>
 
-<div class="fish">🐟</div>
+    <div id="bomb">💣</div>
 
-<header>
-    <h1>NAZ™</h1>
+    <div id="explosion">💥</div>
 
-    <div class="subtitle">
-        Kesinlikle normal bir internet sitesi.
-    </div>
-
-    <div class="warning">
-        ⚠️ BURADA OLAĞANDIŞI HİÇBİR ŞEY YOKTUR
-    </div>
-</header>
-
-<div class="box">
-
-    <h2>👋 Hoş geldin.</h2>
-
-    <p>
-        Bu site son derece ciddi, profesyonel ve mantıklıdır.
-    </p>
-
-    <p>
-        Lütfen aşağıdaki butonlara tamamen güvenerek basınız.
-    </p>
-
-    <div class="eye-area">
-        <div class="eye"><div class="pupil"></div></div>
-        <div class="eye"><div class="pupil"></div></div>
-    </div>
-
-    <div class="buttons">
-
-        <button class="danger" onclick="dontClick()">
-            🚫 BUNA BASMA
-        </button>
-
-        <button class="emergency" onclick="emergency()">
-            🚨 ACİL DURUM
-        </button>
-
-        <button class="blue" onclick="fate()">
-            💬 NAZDAN MESAJ AL
-        </button>
-
-        <button class="green" onclick="document.getElementById('document').style.display='block'">
-            📜 ÇOK ÖNEMLİ BELGE
-        </button>
-
-        <button id="runaway" onmouseover="runAway()" ontouchstart="runAway(event)">
-            🖱️ BURAYA BAS
-        </button>
-
-    </div>
+    <div id="flash"></div>
 
     <div id="message">
-        Sistem sizi bekliyor...
+        naz elinden düşürdü prdn
     </div>
 
-    <div id="document">
-        <h2>RESMÎ VE ÇOK ÖNEMLİ BELGE</h2>
-
-        <p>
-            Bu belge, bu siteye giren kişinin siteye girdiğini
-            resmî olarak doğrulamaktadır.
-        </p>
-
-        <p>
-            Yapılan araştırmalar sonucunda kişinin
-            <b>%100 ihtimalle buraya kendi isteğiyle geldiği</b>
-            tespit edilmiştir.
-        </p>
-
-        <hr>
-
-        <p>
-            Belge No: 482917-XD<br>
-            Yetkili: Kim olduğu bilinmeyen biri<br>
-            Tarih: Bugün
-        </p>
-
-        <p>☑ Ciddiyetle onaylandı.</p>
+    <div id="sub">
+        site normal çalışıyor 👍
     </div>
 
-</div>
 
-<div class="stats">
-    📊 Site ciddiyet seviyesi:
-    <span id="seriousness">%3</span>
-</div>
+    <script>
 
-<footer>
-    Naz'ın Kesinlikle Normal Sitesi™ © 2026<br>
-    Bu sitenin hiçbir amacı yoktur.
-</footer>
+        /*
+            BASLANGIÇ
+            Sayfa açıldığında bomba düşer.
+        */
 
-<script>
+        const bomb = document.getElementById("bomb");
+        const explosion = document.getElementById("explosion");
+        const flash = document.getElementById("flash");
+        const message = document.getElementById("message");
+        const sub = document.getElementById("sub");
 
-const messages = [
-    "Neden bastın?",
-    "Bunu yapacağını tahmin etmiştim.",
-    "İlginç.",
-    "Sistem bunu onaylamıyor.",
-    "Bir şey olmadı. Rahatla.",
-    "Tebrikler. Hiçbir şey kazandın.",
-    "Bunu kimseye anlatma.",
-    "Seni uyarmıştık.",
-    "Bu butonun burada ne işi var?",
-    "Lütfen siteyi ciddiye alınız.",
-    "Ciddiyet seviyesi düşürüldü.",
-    "Hata: Mantık bulunamadı."
-];
 
-let dontClickCount = 0;
-let dontClickTimer;
+        /*
+            PATLAMA SESİ
 
-function randomMessage() {
-    const message =
-        messages[Math.floor(Math.random() * messages.length)];
+            Harici MP3 kullanmıyoruz.
+            Tarayıcının kendi ses sisteminden
+            kısa bir patlama benzeri ses oluşturuyoruz.
+        */
 
-    document.getElementById("message").innerText = message;
-}
+        function makeExplosionSound() {
 
-function dontClick() {
+            try {
 
-    dontClickCount++;
+                const AudioContext =
+                    window.AudioContext ||
+                    window.webkitAudioContext;
 
-    clearTimeout(dontClickTimer);
+                const audioContext = new AudioContext();
 
-    if (dontClickCount === 1) {
+                const duration = 0.45;
 
-        document.getElementById("message").innerText =
-            "algılar kapalı galiba";
+                const buffer =
+                    audioContext.createBuffer(
+                        1,
+                        audioContext.sampleRate * duration,
+                        audioContext.sampleRate
+                    );
 
-    } else if (dontClickCount === 2) {
+                const data =
+                    buffer.getChannelData(0);
 
-        document.getElementById("message").innerText =
-            "malmısın";
+                /*
+                    Gürültü oluşturuyoruz.
+                */
 
-    } else if (dontClickCount === 3) {
+                for (let i = 0; i < data.length; i++) {
 
-        document.getElementById("message").innerText =
-            "kişisel bilgiler başarıyla kaydedildi";
+                    const decay =
+                        1 - i / data.length;
 
-    } else {
+                    data[i] =
+                        (Math.random() * 2 - 1)
+                        * decay
+                        * decay;
 
-        document.getElementById("message").innerText =
-            "cidden hâlâ basıyorsun mu?";
-    }
+                }
 
-    dontClickTimer = setTimeout(() => {
+                const noise =
+                    audioContext.createBufferSource();
 
-        document.getElementById("message").innerText =
-            "şaka lan hemen tırstın";
+                noise.buffer = buffer;
 
-    }, 1000);
-}
 
-function emergency() {
+                /*
+                    Bas frekans
+                */
 
-    document.getElementById("message").innerText =
-        "ACİL DURUM İPTAL EDİLDİ. ACİL DURUM YOKMUŞ.";
+                const oscillator =
+                    audioContext.createOscillator();
 
-}
+                oscillator.type = "sine";
+                oscillator.frequency.setValueAtTime(
+                    100,
+                    audioContext.currentTime
+                );
 
-let fateCount = 0;
+                oscillator.frequency.exponentialRampToValueAtTime(
+                    35,
+                    audioContext.currentTime + 0.35
+                );
 
-function fate() {
 
-    fateCount++;
+                /*
+                    Ses seviyeleri
+                */
 
-    const resultMessages = [
+                const noiseGain =
+                    audioContext.createGain();
 
-        "naz şu an mesaj yazmak istemiyor.",
-        "naz meşgul. sebebi bilinmiyor.",
-        "naz sana bir şey söylemek istedi ama unuttu.",
-        "naz: bunu neden tekrar tekrar deniyorsun?",
-        "naz şu anda siteyle ilgileniyor.",
-        "naz mesaj göndermeyi reddetti.",
-        "naz: su iç.",
-        "naz: bugünlük bu kadar.",
-        "naz: kader makinesi daha mantıklıydı.",
-        "naz: bunu okuyorsan hâlâ buradasın."
+                const oscillatorGain =
+                    audioContext.createGain();
 
-    ];
+                noiseGain.gain.setValueAtTime(
+                    0.8,
+                    audioContext.currentTime
+                );
 
-    let result;
+                noiseGain.gain.exponentialRampToValueAtTime(
+                    0.01,
+                    audioContext.currentTime + duration
+                );
 
-    if (fateCount === 1) {
+                oscillatorGain.gain.setValueAtTime(
+                    0.8,
+                    audioContext.currentTime
+                );
 
-        result =
-            "naz mesaj yazmak istemedi birdaha dene";
+                oscillatorGain.gain.exponentialRampToValueAtTime(
+                    0.01,
+                    audioContext.currentTime + 0.35
+                );
 
-    } else if (fateCount === 2) {
 
-        result =
-            "yada denemesen mi üşendim ama istersen dene";
+                noise.connect(noiseGain);
+                noiseGain.connect(audioContext.destination);
 
-    } else if (fateCount === 3) {
+                oscillator.connect(oscillatorGain);
+                oscillatorGain.connect(audioContext.destination);
 
-        result =
-            "su iç";
 
-    } else {
+                noise.start();
 
-        result =
-            resultMessages[
-                Math.floor(Math.random() * resultMessages.length)
-            ];
-    }
+                oscillator.start();
 
-    document.getElementById("message").innerText =
-        "💬 NAZ: " + result;
-}
+                noise.stop(
+                    audioContext.currentTime + duration
+                );
 
-function runAway(event) {
+                oscillator.stop(
+                    audioContext.currentTime + 0.35
+                );
 
-    if (event) {
-        event.preventDefault();
-    }
+            } catch (error) {
 
-    const button =
-        document.getElementById("runaway");
+                console.log(
+                    "Ses otomatik olarak başlatılamadı."
+                );
 
-    const maxX =
-        Math.min(180, window.innerWidth * 0.25);
+            }
+        }
 
-    const maxY =
-        Math.min(100, window.innerHeight * 0.12);
 
-    const x =
-        Math.random() * (maxX * 2) - maxX;
+        /*
+            PATLAMA
+        */
 
-    const y =
-        Math.random() * (maxY * 2) - maxY;
+        function explode() {
 
-    button.style.transform =
-        `translate(${x}px, ${y}px)
-         rotate(${Math.random() * 20 - 10}deg)`;
-}
+            // Bomba kaybolsun
+            bomb.style.display = "none";
 
-document.addEventListener("mousemove", function(e) {
+            // Patlama
+            explosion.classList.add("explode");
 
-    const pupils =
-        document.querySelectorAll(".pupil");
+            // Ekran parlaması
+            flash.classList.add("flash");
 
-    pupils.forEach(pupil => {
+            // Ekran sarsılması
+            document.body.classList.add("shake");
 
-        const eye =
-            pupil.parentElement;
+            // Ses
+            makeExplosionSound();
 
-        const rect =
-            eye.getBoundingClientRect();
 
-        const eyeX =
-            rect.left + rect.width / 2;
+            /*
+                Patlamadan biraz sonra yazı gelsin.
+            */
 
-        const eyeY =
-            rect.top + rect.height / 2;
+            setTimeout(() => {
 
-        const angle =
-            Math.atan2(
-                e.clientY - eyeY,
-                e.clientX - eyeX
-            );
+                message.classList.add("show");
 
-        const distance = 15;
+            }, 350);
 
-        pupil.style.left =
-            22 + Math.cos(angle) * distance + "px";
 
-        pupil.style.top =
-            22 + Math.sin(angle) * distance + "px";
+            /*
+                Alt yazı
+            */
 
-    });
+            setTimeout(() => {
 
-});
+                sub.classList.add("show");
 
-setInterval(() => {
+            }, 1200);
 
-    const number =
-        Math.floor(Math.random() * 8);
+        }
 
-    document.getElementById("seriousness").innerText =
-        "%" + number;
 
-}, 800);
+        /*
+            SAYFA AÇILDIĞINDA
+        */
 
-setInterval(randomMessage, 7000);
+        window.addEventListener("load", () => {
 
-</script>
+            /*
+                Küçük gecikme:
+                Kullanıcı sayfayı açtığında
+                bomba hemen düşmeye başlasın.
+            */
+
+            setTimeout(() => {
+
+                bomb.classList.add("drop");
+
+            }, 150);
+
+
+            /*
+                Bomba düştükten sonra patla.
+            */
+
+            setTimeout(() => {
+
+                explode();
+
+            }, 1550);
+
+        });
+
+
+        /*
+            TARAYICI SESİ ENGELLERSE
+
+            Kullanıcı sayfaya herhangi bir şekilde
+            tıklarsa ses yine çalışabilir.
+        */
+
+        document.addEventListener(
+            "click",
+            () => {
+
+                if (
+                    !document.body.dataset.soundStarted
+                ) {
+
+                    document.body.dataset.soundStarted =
+                        "true";
+
+                }
+
+            },
+            { once: true }
+        );
+
+    </script>
 
 </body>
 </html>
+```
