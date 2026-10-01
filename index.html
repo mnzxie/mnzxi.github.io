@@ -1,204 +1,208 @@
+```html
 <!DOCTYPE html>
 <html lang="tr">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>...</title>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title></title>
 
-  <style>
-    * {
-      box-sizing: border-box;
+<style>
+html, body {
+    margin: 0;
+    width: 100%;
+    height: 100%;
+    overflow: hidden;
+    background: #080808;
+}
+
+#bomb {
+    position: absolute;
+    left: 50%;
+    top: -100px;
+    width: 80px;
+    height: 80px;
+    margin-left: -40px;
+    background: #222;
+    border: 5px solid #555;
+    border-radius: 50%;
+    box-shadow: inset -12px -12px 15px #000,
+                8px 12px 20px #000;
+    z-index: 5;
+}
+
+#bomb:before {
+    content: "";
+    position: absolute;
+    width: 20px;
+    height: 25px;
+    background: #333;
+    left: 25px;
+    top: -25px;
+    border-radius: 5px;
+}
+
+#fuse {
+    position: absolute;
+    width: 25px;
+    height: 5px;
+    background: #8b4513;
+    left: 42px;
+    top: -28px;
+    transform: rotate(-35deg);
+}
+
+#spark {
+    position: absolute;
+    left: 64px;
+    top: -38px;
+    width: 10px;
+    height: 10px;
+    background: #ffcc00;
+    border-radius: 50%;
+    box-shadow: 0 0 15px 8px #ff6600;
+}
+
+#boom {
+    display: none;
+    position: absolute;
+    left: 50%;
+    top: 50%;
+    transform: translate(-50%, -50%);
+    font-size: 150px;
+    z-index: 20;
+}
+
+#message {
+    display: none;
+    position: absolute;
+    width: 100%;
+    left: 0;
+    top: 50%;
+    transform: translateY(-50%);
+    text-align: center;
+    color: white;
+    font-family: Arial, sans-serif;
+    font-size: clamp(30px, 6vw, 65px);
+    font-weight: bold;
+    z-index: 30;
+}
+
+@keyframes fall {
+    0% {
+        top: -100px;
+        transform: rotate(0deg);
     }
 
-    html, body {
-      margin: 0;
-      width: 100%;
-      height: 100%;
-      background: #000;
-      overflow: hidden;
-      cursor: default;
+    70% {
+        top: calc(100vh - 180px);
+        transform: rotate(300deg);
     }
 
-    #screen {
-      position: fixed;
-      inset: 0;
-      background: #000;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      z-index: 1;
+    82% {
+        top: calc(100vh - 110px);
+        transform: rotate(350deg) scale(1.1);
     }
 
-    #warning {
-      color: #111;
-      font-family: monospace;
-      font-size: 12px;
-      position: absolute;
-      bottom: 15px;
-      left: 15px;
-      opacity: 0.15;
+    90% {
+        top: calc(100vh - 150px);
+        transform: rotate(380deg) scale(.95);
     }
 
-    #jumpscare {
-      position: fixed;
-      inset: 0;
-      background: #000;
-      display: none;
-      align-items: center;
-      justify-content: center;
-      z-index: 999;
+    100% {
+        top: calc(100vh - 125px);
+        transform: rotate(400deg);
+    }
+}
+
+@keyframes boom {
+    0% {
+        transform: translate(-50%, -50%) scale(.1);
+        opacity: 0;
     }
 
-    #face {
-      width: 100vw;
-      height: 100vh;
-      object-fit: cover;
-      filter: contrast(1.4) brightness(0.9);
+    25% {
+        transform: translate(-50%, -50%) scale(1);
+        opacity: 1;
     }
 
-    #flash {
-      position: fixed;
-      inset: 0;
-      background: white;
-      opacity: 0;
-      z-index: 1000;
-      pointer-events: none;
+    100% {
+        transform: translate(-50%, -50%) scale(2.5);
+        opacity: 0;
     }
+}
 
-    .shake {
-      animation: shake 0.12s infinite;
-    }
+@keyframes shake {
+    0% { transform: translate(0,0); }
+    20% { transform: translate(-12px,8px); }
+    40% { transform: translate(12px,-8px); }
+    60% { transform: translate(-8px,-5px); }
+    80% { transform: translate(8px,5px); }
+    100% { transform: translate(0,0); }
+}
 
-    @keyframes shake {
-      0%   { transform: translate(0, 0); }
-      20%  { transform: translate(-15px, 8px); }
-      40%  { transform: translate(12px, -10px); }
-      60%  { transform: translate(-8px, -12px); }
-      80%  { transform: translate(10px, 7px); }
-      100% { transform: translate(0, 0); }
-    }
-
-    @keyframes flash {
-      0% { opacity: 1; }
-      100% { opacity: 0; }
-    }
-  </style>
+.shake {
+    animation: shake .4s;
+}
+</style>
 </head>
 
 <body>
 
-  <div id="screen">
-    <div id="warning">loading...</div>
-  </div>
+<div id="bomb">
+    <div id="fuse"></div>
+    <div id="spark"></div>
+</div>
 
-  <div id="jumpscare">
-    <!-- Jumpscare görseli -->
-    <svg id="face" viewBox="0 0 1000 1000"
-         xmlns="http://www.w3.org/2000/svg">
+<div id="boom">💥</div>
 
-      <rect width="1000" height="1000" fill="#050505"/>
+<div id="message">
+    naz elinden düşürdü prdn
+</div>
 
-      <!-- kafa -->
-      <ellipse cx="500" cy="500" rx="330" ry="390"
-               fill="#d8d8d8"/>
-
-      <!-- göz çevreleri -->
-      <ellipse cx="365" cy="430" rx="105" ry="125"
-               fill="#050505"/>
-      <ellipse cx="635" cy="430" rx="105" ry="125"
-               fill="#050505"/>
-
-      <!-- gözler -->
-      <ellipse cx="365" cy="440" rx="32" ry="45"
-               fill="white"/>
-      <ellipse cx="635" cy="440" rx="32" ry="45"
-               fill="white"/>
-
-      <!-- burun -->
-      <path d="M470 450 L430 650 L570 650 L530 450"
-            fill="#333"/>
-
-      <!-- ağız -->
-      <path d="M300 700 Q500 850 700 700
-               Q650 900 500 920
-               Q350 900 300 700Z"
-            fill="#050505"/>
-
-      <!-- dişler -->
-      <path d="
-        M330 735 L375 755 L420 765 L465 770
-        L510 772 L555 765 L600 755 L650 735
-        L635 790 L590 800 L545 805 L500 808
-        L455 805 L410 800 L365 790 Z"
-        fill="white"/>
-
-      <!-- çatlaklar -->
-      <path d="M260 250 L190 170 L230 330"
-            stroke="#555" stroke-width="12" fill="none"/>
-      <path d="M740 250 L810 170 L770 330"
-            stroke="#555" stroke-width="12" fill="none"/>
-
-    </svg>
-  </div>
-
-  <div id="flash"></div>
-
-  <!-- SENİN SES DOSYAN -->
-  <audio id="scream" preload="auto">
+<!-- SENİN YÜKLEDİĞİN PATLAMA SESİ -->
+<audio id="explosionSound" preload="auto">
     <source src="dragon-studio-nuclear-explosion-386181.mp3" type="audio/mpeg">
-  </audio>
+</audio>
 
-  <script>
-    const screen = document.getElementById("screen");
-    const jumpscare = document.getElementById("jumpscare");
-    const face = document.getElementById("face");
-    const flash = document.getElementById("flash");
-    const scream = document.getElementById("scream");
+<script>
 
-    let activated = false;
+const bomb = document.getElementById("bomb");
+const boom = document.getElementById("boom");
+const message = document.getElementById("message");
+const explosionSound = document.getElementById("explosionSound");
 
-    function jump() {
-      if (activated) return;
-      activated = true;
 
-      // Siyah ekran
-      screen.style.display = "none";
+/* BOMBA DÜŞÜYOR */
+setTimeout(function() {
+    bomb.style.animation = "fall 1.4s ease-in forwards";
+}, 200);
 
-      // Jumpscare
-      jumpscare.style.display = "flex";
-      jumpscare.classList.add("shake");
 
-      // Beyaz flaş
-      flash.style.animation = "flash 0.18s forwards";
+/* PATLAMA */
+setTimeout(function() {
 
-      // Ses
-      scream.currentTime = 0;
-      scream.play().catch(() => {});
+    bomb.style.display = "none";
 
-      // Birkaç saniye sonra sakinleşsin
-      setTimeout(() => {
-        jumpscare.classList.remove("shake");
-      }, 900);
-    }
+    boom.style.display = "block";
+    boom.style.animation = "boom .6s ease-out forwards";
 
-    /*
-      Sayfaya girdikten sonra rastgele bir süre bekler.
-      4-9 saniye arasında jumpscare gelir.
-    */
-    const delay = 4000 + Math.random() * 5000;
+    document.body.classList.add("shake");
 
-    setTimeout(jump, delay);
-
-    /*
-      Ekrana tıklarsan da hemen çalışır.
-      Bu, tarayıcının ses engelini aşmasına yardımcı olur.
-    */
-    document.addEventListener("click", () => {
-      if (!activated) {
-        jump();
-      }
+    /* GERÇEK PATLAMA SESİ */
+    explosionSound.currentTime = 0;
+    explosionSound.play().catch(function() {
+        console.log("Tarayıcı sesi otomatik başlatmayı engelledi.");
     });
-  </script>
+
+    /* YAZI */
+    setTimeout(function() {
+        message.style.display = "block";
+    }, 250);
+
+}, 1650);
+
+</script>
 
 </body>
 </html>
+```
