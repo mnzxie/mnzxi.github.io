@@ -2,443 +2,275 @@
 <!DOCTYPE html>
 <html lang="tr">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-    <title>Naz</title>
+<title></title>
 
-    <style>
-        * {
-            box-sizing: border-box;
-        }
+<style>
+* {
+    box-sizing: border-box;
+}
 
-        html, body {
-            margin: 0;
-            width: 100%;
-            height: 100%;
-            overflow: hidden;
-        }
+html, body {
+    margin: 0;
+    width: 100%;
+    height: 100%;
+    overflow: hidden;
+    background: #080808;
+}
 
-        body {
-            background: #111;
-            color: white;
-            font-family: Arial, sans-serif;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-        }
+body {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-family: Arial, sans-serif;
+}
 
-        /* Ana yazı */
-        #message {
-            opacity: 0;
-            transform: scale(0.5);
-            font-size: clamp(28px, 6vw, 70px);
-            font-weight: bold;
-            text-align: center;
-            transition: opacity 0.5s ease, transform 0.5s ease;
-            padding: 20px;
-        }
+/* BOMBA */
+#bomb {
+    position: fixed;
+    left: 50%;
+    top: -100px;
+    transform: translateX(-50%) rotate(-15deg);
+    font-size: 85px;
+    z-index: 10;
+    user-select: none;
+}
 
-        #message.show {
-            opacity: 1;
-            transform: scale(1);
-        }
+/* DÜŞME */
+#bomb.drop {
+    animation: falling 1.35s cubic-bezier(.45,.05,.55,.95) forwards;
+}
 
-        /* Bomba */
-        #bomb {
-            position: fixed;
-            top: -120px;
-            left: 50%;
-            transform: translateX(-50%);
-            font-size: 90px;
-            z-index: 10;
-            user-select: none;
-        }
+@keyframes falling {
 
-        /* Patlama */
-        #explosion {
-            position: fixed;
-            left: 50%;
-            top: 50%;
-            transform: translate(-50%, -50%) scale(0);
-            font-size: 180px;
-            opacity: 0;
-            z-index: 20;
-            user-select: none;
-        }
+    0% {
+        top: -110px;
+        transform: translateX(-50%) rotate(-15deg);
+    }
 
-        #explosion.explode {
-            animation: explosion 0.7s ease-out forwards;
-        }
+    20% {
+        transform: translateX(-50%) rotate(25deg);
+    }
 
-        @keyframes explosion {
-            0% {
-                transform: translate(-50%, -50%) scale(0);
-                opacity: 0;
-            }
+    45% {
+        transform: translateX(-50%) rotate(-30deg);
+    }
 
-            30% {
-                transform: translate(-50%, -50%) scale(1.5);
-                opacity: 1;
-            }
+    70% {
+        transform: translateX(-50%) rotate(35deg);
+    }
 
-            100% {
-                transform: translate(-50%, -50%) scale(3);
-                opacity: 0;
-            }
-        }
+    88% {
+        top: calc(100vh - 145px);
+        transform: translateX(-50%) rotate(-20deg);
+    }
 
-        /* Bombanın düşmesi */
-        #bomb.drop {
-            animation: drop 1.4s cubic-bezier(.2,.8,.3,1) forwards;
-        }
+    /* YERE ÇARPIYOR */
+    92% {
+        top: calc(100vh - 115px);
+        transform: translateX(-50%) rotate(10deg) scale(1.08);
+    }
 
-        @keyframes drop {
-            0% {
-                top: -120px;
-            }
+    /* SEKİYOR */
+    96% {
+        top: calc(100vh - 145px);
+        transform: translateX(-50%) rotate(-8deg) scale(.95);
+    }
 
-            75% {
-                top: calc(100vh - 130px);
-            }
+    /* YERE OTURUYOR */
+    100% {
+        top: calc(100vh - 125px);
+        transform: translateX(-50%) rotate(0deg) scale(1);
+    }
+}
 
-            85% {
-                top: calc(100vh - 160px);
-            }
 
-            92% {
-                top: calc(100vh - 130px);
-            }
+/* KÜÇÜK ÇARPMA TOZU */
+#dust {
+    position: fixed;
+    left: 50%;
+    bottom: 70px;
+    transform: translateX(-50%) scale(0);
+    font-size: 70px;
+    opacity: 0;
+    z-index: 8;
+}
 
-            100% {
-                top: calc(100vh - 140px);
-            }
-        }
+#dust.show {
+    animation: dust 0.35s ease-out forwards;
+}
 
-        /* Patlama sırasında ekran */
-        body.shake {
-            animation: shake 0.45s ease;
-        }
+@keyframes dust {
 
-        @keyframes shake {
-            0%   { transform: translate(0, 0); }
-            15%  { transform: translate(-12px, 8px); }
-            30%  { transform: translate(10px, -8px); }
-            45%  { transform: translate(-8px, -10px); }
-            60%  { transform: translate(10px, 7px); }
-            75%  { transform: translate(-6px, 4px); }
-            100% { transform: translate(0, 0); }
-        }
+    0% {
+        transform: translateX(-50%) scale(.2);
+        opacity: 0;
+    }
 
-        /* Ekrandaki beyaz patlama */
-        #flash {
-            position: fixed;
-            inset: 0;
-            background: white;
-            opacity: 0;
-            pointer-events: none;
-            z-index: 30;
-        }
+    40% {
+        transform: translateX(-50%) scale(1);
+        opacity: .8;
+    }
 
-        #flash.flash {
-            animation: flash 0.25s ease-out;
-        }
+    100% {
+        transform: translateX(-50%) scale(1.5);
+        opacity: 0;
+    }
+}
 
-        @keyframes flash {
-            0% {
-                opacity: 0.9;
-            }
 
-            100% {
-                opacity: 0;
-            }
-        }
+/* PATLAMA */
+#explosion {
+    position: fixed;
+    left: 50%;
+    top: 50%;
+    transform: translate(-50%, -50%) scale(0);
+    font-size: 170px;
+    opacity: 0;
+    z-index: 20;
+}
 
-        /* Küçük açıklama */
-        #sub {
-            position: fixed;
-            bottom: 25px;
-            left: 0;
-            right: 0;
-            text-align: center;
-            color: #555;
-            font-size: 13px;
-            opacity: 0;
-            transition: opacity 1s ease;
-        }
+#explosion.show {
+    animation: boom .65s ease-out forwards;
+}
 
-        #sub.show {
-            opacity: 1;
-        }
-    </style>
+@keyframes boom {
+
+    0% {
+        transform: translate(-50%, -50%) scale(0);
+        opacity: 0;
+    }
+
+    20% {
+        transform: translate(-50%, -50%) scale(.8);
+        opacity: 1;
+    }
+
+    50% {
+        transform: translate(-50%, -50%) scale(1.5);
+        opacity: 1;
+    }
+
+    100% {
+        transform: translate(-50%, -50%) scale(3);
+        opacity: 0;
+    }
+}
+
+
+/* EKRAN PARLAMASI */
+#flash {
+    position: fixed;
+    inset: 0;
+    background: white;
+    opacity: 0;
+    z-index: 30;
+    pointer-events: none;
+}
+
+#flash.show {
+    animation: flash .18s ease-out;
+}
+
+@keyframes flash {
+
+    0% {
+        opacity: .95;
+    }
+
+    100% {
+        opacity: 0;
+    }
+}
+
+
+/* EKRAN SARSINTISI */
+body.shake {
+    animation: shake .45s ease;
+}
+
+@keyframes shake {
+
+    0%   { transform: translate(0,0); }
+    15%  { transform: translate(-15px,8px); }
+    30%  { transform: translate(14px,-10px); }
+    45%  { transform: translate(-10px,-8px); }
+    60%  { transform: translate(12px,10px); }
+    75%  { transform: translate(-6px,-5px); }
+    100% { transform: translate(0,0); }
+
+}
+
+
+/* YAZI */
+#message {
+    position: fixed;
+    left: 0;
+    right: 0;
+    top: 50%;
+    transform: translateY(-50%) scale(.6);
+
+    text-align: center;
+
+    color: white;
+
+    font-size: clamp(28px, 6vw, 65px);
+    font-weight: 700;
+
+    opacity: 0;
+
+    z-index: 40;
+
+    padding: 20px;
+}
+
+#message.show {
+    animation: messageIn .35s ease-out forwards;
+}
+
+@keyframes messageIn {
+
+    from {
+        opacity: 0;
+        transform: translateY(-50%) scale(.6);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(-50%) scale(1);
+    }
+
+}
+</style>
 </head>
 
 <body>
 
-    <div id="bomb">💣</div>
+<div id="bomb">💣</div>
 
-    <div id="explosion">💥</div>
+<div id="dust">💨</div>
 
-    <div id="flash"></div>
+<div id="explosion">💥</div>
 
-    <div id="message">
-        naz elinden düşürdü prdn
-    </div>
+<div id="flash"></div>
 
-    <div id="sub">
-        site normal çalışıyor 👍
-    </div>
+<div id="message">
+    naz elinden düsürdü prdn
+</div>
 
 
-    <script>
+<script>
 
-        /*
-            BASLANGIÇ
-            Sayfa açıldığında bomba düşer.
-        */
+/* ELEMENTLER */
 
-        const bomb = document.getElementById("bomb");
-        const explosion = document.getElementById("explosion");
-        const flash = document.getElementById("flash");
-        const message = document.getElementById("message");
-        const sub = document.getElementById("sub");
+const bomb = document.getElementById("bomb");
+const dust = document.getElementById("dust");
+const explosion = document.getElementById("explosion");
+const flash = document.getElementById("flash");
+const message = document.getElementById("message");
 
 
-        /*
-            PATLAMA SESİ
-
-            Harici MP3 kullanmıyoruz.
-            Tarayıcının kendi ses sisteminden
-            kısa bir patlama benzeri ses oluşturuyoruz.
-        */
-
-        function makeExplosionSound() {
-
-            try {
-
-                const AudioContext =
-                    window.AudioContext ||
-                    window.webkitAudioContext;
-
-                const audioContext = new AudioContext();
-
-                const duration = 0.45;
-
-                const buffer =
-                    audioContext.createBuffer(
-                        1,
-                        audioContext.sampleRate * duration,
-                        audioContext.sampleRate
-                    );
-
-                const data =
-                    buffer.getChannelData(0);
-
-                /*
-                    Gürültü oluşturuyoruz.
-                */
-
-                for (let i = 0; i < data.length; i++) {
-
-                    const decay =
-                        1 - i / data.length;
-
-                    data[i] =
-                        (Math.random() * 2 - 1)
-                        * decay
-                        * decay;
-
-                }
-
-                const noise =
-                    audioContext.createBufferSource();
-
-                noise.buffer = buffer;
-
-
-                /*
-                    Bas frekans
-                */
-
-                const oscillator =
-                    audioContext.createOscillator();
-
-                oscillator.type = "sine";
-                oscillator.frequency.setValueAtTime(
-                    100,
-                    audioContext.currentTime
-                );
-
-                oscillator.frequency.exponentialRampToValueAtTime(
-                    35,
-                    audioContext.currentTime + 0.35
-                );
-
-
-                /*
-                    Ses seviyeleri
-                */
-
-                const noiseGain =
-                    audioContext.createGain();
-
-                const oscillatorGain =
-                    audioContext.createGain();
-
-                noiseGain.gain.setValueAtTime(
-                    0.8,
-                    audioContext.currentTime
-                );
-
-                noiseGain.gain.exponentialRampToValueAtTime(
-                    0.01,
-                    audioContext.currentTime + duration
-                );
-
-                oscillatorGain.gain.setValueAtTime(
-                    0.8,
-                    audioContext.currentTime
-                );
-
-                oscillatorGain.gain.exponentialRampToValueAtTime(
-                    0.01,
-                    audioContext.currentTime + 0.35
-                );
-
-
-                noise.connect(noiseGain);
-                noiseGain.connect(audioContext.destination);
-
-                oscillator.connect(oscillatorGain);
-                oscillatorGain.connect(audioContext.destination);
-
-
-                noise.start();
-
-                oscillator.start();
-
-                noise.stop(
-                    audioContext.currentTime + duration
-                );
-
-                oscillator.stop(
-                    audioContext.currentTime + 0.35
-                );
-
-            } catch (error) {
-
-                console.log(
-                    "Ses otomatik olarak başlatılamadı."
-                );
-
-            }
-        }
-
-
-        /*
-            PATLAMA
-        */
-
-        function explode() {
-
-            // Bomba kaybolsun
-            bomb.style.display = "none";
-
-            // Patlama
-            explosion.classList.add("explode");
-
-            // Ekran parlaması
-            flash.classList.add("flash");
-
-            // Ekran sarsılması
-            document.body.classList.add("shake");
-
-            // Ses
-            makeExplosionSound();
-
-
-            /*
-                Patlamadan biraz sonra yazı gelsin.
-            */
-
-            setTimeout(() => {
-
-                message.classList.add("show");
-
-            }, 350);
-
-
-            /*
-                Alt yazı
-            */
-
-            setTimeout(() => {
-
-                sub.classList.add("show");
-
-            }, 1200);
-
-        }
-
-
-        /*
-            SAYFA AÇILDIĞINDA
-        */
-
-        window.addEventListener("load", () => {
-
-            /*
-                Küçük gecikme:
-                Kullanıcı sayfayı açtığında
-                bomba hemen düşmeye başlasın.
-            */
-
-            setTimeout(() => {
-
-                bomb.classList.add("drop");
-
-            }, 150);
-
-
-            /*
-                Bomba düştükten sonra patla.
-            */
-
-            setTimeout(() => {
-
-                explode();
-
-            }, 1550);
-
-        });
-
-
-        /*
-            TARAYICI SESİ ENGELLERSE
-
-            Kullanıcı sayfaya herhangi bir şekilde
-            tıklarsa ses yine çalışabilir.
-        */
-
-        document.addEventListener(
-            "click",
-            () => {
-
-                if (
-                    !document.body.dataset.soundStarted
-                ) {
-
-                    document.body.dataset.soundStarted =
-                        "true";
-
-                }
-
-            },
-            { once: true }
-        );
-
-    </script>
-
-</body>
-</html>
+/* P*
 ```
